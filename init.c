@@ -6,7 +6,7 @@
 /*   By: dabi-rac <dabi-rac@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/04 16:32:20 by dabi-rac          #+#    #+#             */
-/*   Updated: 2023/11/05 18:38:23 by dabi-rac         ###   ########.fr       */
+/*   Updated: 2023/11/06 23:25:42 by dabi-rac         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,18 +101,16 @@ int	init_table(t_data *data)
 
 int	init_thread(t_data *data)
 {
-	pthread_t	td_meals;
+	pthread_t	controls;
 	int			i;
 
 	i = -1;
-	/*
-	if (data->times_to_eat > 0)
-	{
-		if (pthread_create(&td_meals, NULL, &check_meals, data) != 0)
-			return (error("Errore nella creazione thread di controllo", data, 0));
-		pthread_join(td_meals, NULL);
-	}
-	*/
+	
+	if (pthread_create(controls, NULL, &controls, &data) != 0)
+		return (error("Errore nella creazione thread di controllo", &data, 0));
+	pthread_join(controls, NULL);
+	
+	
 	while (++i < data->n_philos)
 	{
 		if (pthread_create(&data->thread[i], NULL, &routine, &data->philo[i]) != 0)
