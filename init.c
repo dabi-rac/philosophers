@@ -6,7 +6,7 @@
 /*   By: dabi-rac <dabi-rac@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/04 16:32:20 by dabi-rac          #+#    #+#             */
-/*   Updated: 2023/11/06 23:25:42 by dabi-rac         ###   ########.fr       */
+/*   Updated: 2023/11/08 23:28:46 by dabi-rac         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,11 +106,9 @@ int	init_thread(t_data *data)
 
 	i = -1;
 	
-	if (pthread_create(controls, NULL, &controls, &data) != 0)
-		return (error("Errore nella creazione thread di controllo", &data, 0));
-	pthread_join(controls, NULL);
-	
-	
+	if (pthread_create(&controls, NULL, &control, &data) != 0)
+		return (error("Errore nella creazione thread di controllo", data, 0));
+		pthread_detach(controls);
 	while (++i < data->n_philos)
 	{
 		if (pthread_create(&data->thread[i], NULL, &routine, &data->philo[i]) != 0)
@@ -118,6 +116,7 @@ int	init_thread(t_data *data)
 		pthread_detach(data->thread[i]);
 		ft_usleep(1);
 	}
+	//pthread_join(controls, NULL);
 	while (data->dead == 0 && data->finished == 0)
 		;
 	ft_exit(data);

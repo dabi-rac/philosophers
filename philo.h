@@ -6,7 +6,7 @@
 /*   By: dabi-rac <dabi-rac@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/04 16:18:37 by dabi-rac          #+#    #+#             */
-/*   Updated: 2023/11/06 23:07:13 by dabi-rac         ###   ########.fr       */
+/*   Updated: 2023/11/08 22:21:27 by dabi-rac         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,7 @@ void		clear_data(t_data *data);
 void		ft_exit(t_data *data);
 int			ft_usleep(u_int64_t time);
 void * take_forks(t_philo *philo);
-void * controls(void *arg);
+void * control(void *arg);
 void * its_my_life(t_philo *philo);
 
 #endif

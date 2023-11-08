@@ -6,7 +6,7 @@
 /*   By: dabi-rac <dabi-rac@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/04 16:18:59 by dabi-rac          #+#    #+#             */
-/*   Updated: 2023/11/06 23:24:43 by dabi-rac         ###   ########.fr       */
+/*   Updated: 2023/11/08 23:25:31 by dabi-rac         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,52 +16,42 @@ void* routine (void *arg)
 {
     t_philo     *philo;
     philo = (t_philo *)arg;
-    if(philo)
+    
+    while (philo->data->dead == 0 && philo->data->finished == 0)
     {
-        pthread_create(&philo->controls, NULL, &controls, NULL);
+        if (philo->id % 2 != 0)
+            ft_usleep(1);
+        its_my_life(philo);
     }
-    else
-    {
-        error("Errore nella crazione thread di controllo", philo->data, 0);
-        return ((void *) 1);
-    }
-    	while (philo->data->dead == 0 && philo->data->finished == 0)
-            its_my_life(philo);
-            
     return ((void *) 0);
 }
 
-void * controls(void *arg)
+void * control(void *arg)
 {
     t_philo     *philo;
     philo = (t_philo *)arg;
     int     i;
     
-    while(arg.dead == 0)
+    while(philo->data->dead == 0)
     {
         i = 0;
-        while(i++ < arg->n_philos)
+        while(i < philo->data->n_philos)
         {
-            if(arg.philo[i]->life_time <= get_time())
+            if(philo->data->philo[i].life_time <= get_time())
             {
+                //printf("lifetime control = %llu, id = %d\n", philo->data->philo[i].life_time,  philo->data->philo[i].id);
                 philo->data->dead = 1;
-                message("died",philo);
+                message("died", &philo->data->philo[i]);
                 break ;
             }
-            i = 0;
+            i++;
    //         if(arg.times_to_eat)
     //        {
      //           while(arg.philo[i] > )
    //             arg.philo[i].meals >= arg.times_to_eat
-   //         }
-            
+   //         } 
         }
-    }
-    
-    
-    /*
-    write the meal and death controls
-    */
+    }  
    return((void *) 0);
 }
 
@@ -77,18 +67,22 @@ void * its_my_life(t_philo *philo)
 void * take_forks(t_philo *philo)
 {
     pthread_mutex_lock(philo->right);
-	message("has taken a fork", philo);
+	
+    message("has taken a fork", philo);
+    if(philo->data->n_philos == 1)
+    {
+        ft_usleep(philo->data->time_to_die);
+        return((void *) 0);
+    }
 	pthread_mutex_lock(philo->left);
 	message("has taken a fork", philo);
 	pthread_mutex_lock(&philo->lock);
-	pthread_mutex_lock(&philo->data->lock);
     message("is eating", philo);
+    philo->life_time += philo->data->time_to_die;
     ft_usleep(philo->data->time_to_eat);
     philo->meals++;
 	philo->eating = 1;
-	philo->life_time += philo->data->time_to_die;
-	pthread_mutex_unlock(&philo->lock);
-	pthread_mutex_unlock(&philo->data->lock);
+    pthread_mutex_unlock(&philo->lock);
     pthread_mutex_unlock(philo->left);
 	pthread_mutex_unlock(philo->right);
     return((void *) 0);
