@@ -17,7 +17,7 @@ void* routine (void *arg)
     t_philo     *philo;
     philo = (t_philo *)arg;
     
-    while (philo->data->dead == 0 && philo->data->finished == 0)
+    while (philo->data->dead == 0 || philo->data->finished == 0)
     {
         if (philo->id % 2 != 0)
             ft_usleep(1);
@@ -31,33 +31,60 @@ void * control(void *arg)
     t_philo     *philo;
     philo = (t_philo *)arg;
     int     i;
-    
+    int     j;
+
     while(philo->data->dead == 0)
     {
         i = 0;
-        while(i < philo->data->n_philos)
+        j = 0;
+
+        if (philo->data->n_philos == 1)
+        {
+            ft_usleep(philo->data->time_to_die);
+            message("died", &philo->data->philo[i]);
+            philo->data->dead = 1;
+            ft_exit(philo->data);
+        }    
+        while (i < philo->data->n_philos)
         {
             if(philo->data->philo[i].life_time <= get_time())
             {
-                //printf("lifetime control = %llu, id = %d\n", philo->data->philo[i].life_time,  philo->data->philo[i].id);
-                philo->data->dead = 1;
                 message("died", &philo->data->philo[i]);
-                break ;
-            }
+                philo->data->dead = 1;
+                ft_exit(philo->data);
+                
+            }    
             i++;
-   //         if(arg.times_to_eat)
-    //        {
-     //           while(arg.philo[i] > )
-   //             arg.philo[i].meals >= arg.times_to_eat
-   //         } 
         }
+
+
+        while (j < philo->data->n_philos)
+        {
+            if (philo->data->philo[j].meals == philo->data->times_to_eat 
+            && philo->data->finished != 2)
+            {
+                j++;
+                printf("check\n");
+               // philo->data->finished = 2;
+                if (j == philo->data->n_philos)
+                {
+                    philo->data->dead = 1;
+                    philo->data->finished = 2;
+                    ft_exit(philo->data);
+                }
+            }
+        }
+        j = 0;
     }  
    return((void *) 0);
 }
 
 void * its_my_life(t_philo *philo)
 {
+    
     take_forks(philo);
+    // if (philo->data->dead == 1)
+    //     return((void *) 0);
     message("is sleeping",philo);
     ft_usleep(philo->data->time_to_sleep);
     message("is thinking",philo);
@@ -69,11 +96,12 @@ void * take_forks(t_philo *philo)
     pthread_mutex_lock(philo->right);
 	
     message("has taken a fork", philo);
-    if(philo->data->n_philos == 1)
-    {
-        ft_usleep(philo->data->time_to_die);
-        return((void *) 0);
-    }
+    // if(philo->data->n_philos == 1)
+    // {
+    //     ft_usleep(philo->data->time_to_die);
+    //     philo->data->dead = 1;
+    //     return((void *) 0);
+    // }
 	pthread_mutex_lock(philo->left);
 	message("has taken a fork", philo);
 	pthread_mutex_lock(&philo->lock);
@@ -91,7 +119,7 @@ void * take_forks(t_philo *philo)
 void	message(char *str, t_philo *philo)
 {
 	pthread_mutex_lock(&philo->data->write);
-	printf("%llu %d %s\n", (get_time() - philo->data->start), \
+	printf("%lu %d %s\n", (get_time() - philo->data->start), \
 	philo->id + 1, str);
 	pthread_mutex_unlock(&philo->data->write);
 }

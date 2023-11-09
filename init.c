@@ -107,8 +107,10 @@ int	init_thread(t_data *data)
 	i = -1;
 	
 	if (pthread_create(&controls, NULL, &control, &data) != 0)
+	{
 		return (error("Errore nella creazione thread di controllo", data, 0));
-		pthread_detach(controls);
+	}
+	pthread_detach(controls);
 	while (++i < data->n_philos)
 	{
 		if (pthread_create(&data->thread[i], NULL, &routine, &data->philo[i]) != 0)
@@ -116,7 +118,7 @@ int	init_thread(t_data *data)
 		pthread_detach(data->thread[i]);
 		ft_usleep(1);
 	}
-	//pthread_join(controls, NULL);
+	
 	while (data->dead == 0 && data->finished == 0)
 		;
 	ft_exit(data);
