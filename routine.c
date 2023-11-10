@@ -64,8 +64,6 @@ void * control(void *arg)
             && philo->data->finished != 2)
             {
                 j++;
-                printf("check\n");
-               // philo->data->finished = 2;
                 if (j == philo->data->n_philos)
                 {
                     philo->data->dead = 1;
